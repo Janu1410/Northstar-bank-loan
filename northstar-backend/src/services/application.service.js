@@ -116,20 +116,17 @@ export const createApplicationService = async (body, ipAddress) => {
     },
   });
 
-  const emailDelivery = await sendNotificationEmailSafely(
-    sendApplicationSubmittedEmail,
-    {
-      applicationId: application.applicationId,
-      email,
-      firstName,
-      lastName,
-    },
-  );
+  void sendNotificationEmailSafely(sendApplicationSubmittedEmail, {
+    applicationId: application.applicationId,
+    email,
+    firstName,
+    lastName,
+  });
 
   return {
     ...application,
     notificationDelivery: {
-      email: emailDelivery.delivered ? "SENT" : "FAILED",
+      email: "QUEUED",
     },
   };
 };
