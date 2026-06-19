@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { FileUp, ShieldCheck, TriangleAlert, UploadCloud } from "lucide-react";
 
@@ -41,7 +41,7 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-export default function DocumentUploadPage() {
+function DocumentUploadPageContent() {
   const searchParams = useSearchParams();
   const token = useMemo(() => searchParams.get("token")?.trim() ?? "", [searchParams]);
   const missingTokenError = token ? null : "Missing upload token.";
@@ -325,5 +325,13 @@ export default function DocumentUploadPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function DocumentUploadPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-[#f4f7fb]" />}>
+      <DocumentUploadPageContent />
+    </Suspense>
   );
 }

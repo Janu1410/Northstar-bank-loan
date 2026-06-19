@@ -14,7 +14,7 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { Suspense, useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
@@ -191,7 +191,7 @@ function getEstimatedCompletion(result: ApplicationStatusResponse | null) {
   }
 }
 
-export default function LoanStatusPage() {
+function LoanStatusPageContent() {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<ApplicationStatusResponse | null>(null);
@@ -529,5 +529,13 @@ export default function LoanStatusPage() {
         ) : null}
       </div>
     </main>
+  );
+}
+
+export default function LoanStatusPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-[#f4f7fb]" />}>
+      <LoanStatusPageContent />
+    </Suspense>
   );
 }

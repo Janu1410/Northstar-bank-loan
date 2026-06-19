@@ -124,7 +124,8 @@ const applicationSchema = z
     }
   });
 
-type ApplicationFormData = z.infer<typeof applicationSchema>;
+type ApplicationFormInput = z.input<typeof applicationSchema>;
+type ApplicationFormData = z.output<typeof applicationSchema>;
 
 type SubmissionSuccess = {
   applicationId: string;
@@ -262,7 +263,7 @@ export default function ApplyPage() {
     setValue,
     control,
     formState: { errors },
-  } = useForm<ApplicationFormData>({
+  } = useForm<ApplicationFormInput, unknown, ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       amountRequested: 5000,
@@ -273,15 +274,15 @@ export default function ApplyPage() {
       email: "",
       phone: "",
       mailingAddress: "",
-      employmentStatus: "",
+      employmentStatus: undefined,
       monthlyGrossIncome: 3000,
       employerName: "",
       employerPhone: "",
-      accountType: "",
+      accountType: undefined,
       routingNumber: "",
       accountNumber: "",
-      bankAccountAge: "",
-      creditTier: "",
+      bankAccountAge: undefined,
+      creditTier: undefined,
       referenceName: "",
       referencePhone: "",
       referenceRelationship: "",
@@ -314,9 +315,9 @@ export default function ApplyPage() {
     setCurrentStep((step) => Math.max(step - 1, 0));
   };
 
-  const buildValidationSummary = (formErrors: FieldErrors<ApplicationFormData>) => {
+  const buildValidationSummary = (formErrors: FieldErrors<ApplicationFormInput>) => {
     return Object.entries(formErrors).map(([fieldName, fieldError]) => {
-      const key = fieldName as keyof ApplicationFormData;
+      const key = fieldName as keyof ApplicationFormInput;
       const message =
         fieldError && typeof fieldError === "object" && "message" in fieldError
           ? fieldError.message
@@ -326,7 +327,7 @@ export default function ApplyPage() {
     });
   };
 
-  const goToFirstInvalidStep = (formErrors: FieldErrors<ApplicationFormData>) => {
+  const goToFirstInvalidStep = (formErrors: FieldErrors<ApplicationFormInput>) => {
     const firstInvalidIndex = steps.findIndex((step) =>
       step.fields.some((field) => field in formErrors),
     );

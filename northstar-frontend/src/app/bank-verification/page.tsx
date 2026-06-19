@@ -14,7 +14,7 @@ import {
   OctagonAlert,
   XCircle,
 } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { Suspense, useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
@@ -85,7 +85,7 @@ function getStatusBadgeClass(status: VerificationSession["status"] | "IDLE") {
   }
 }
 
-export default function BankVerificationPage() {
+function BankVerificationPageContent() {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [session, setSession] = useState<VerificationSession | null>(null);
@@ -503,5 +503,13 @@ export default function BankVerificationPage() {
         </div>
       ) : null}
     </main>
+  );
+}
+
+export default function BankVerificationPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-[#f4f7fb]" />}>
+      <BankVerificationPageContent />
+    </Suspense>
   );
 }
