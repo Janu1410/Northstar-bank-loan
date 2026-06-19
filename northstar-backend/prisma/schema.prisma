@@ -65,6 +65,9 @@ model Application {
   legalConsent        LegalConsent?
   statusLogs          StatusLog[]
   bankVerification    BankVerification?
+  documentRequests    DocumentRequest[]
+  notifications       Notification[]
+  agreement           ApplicationAgreement?
 }
 
 model EmploymentDetail {
@@ -130,6 +133,43 @@ enum BankVerificationStatus {
   FAILED
 }
 
+enum DocumentRequestStatus {
+  REQUESTED
+  UPLOADED
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum DocumentType {
+  GOVERNMENT_ID
+  PROOF_OF_ADDRESS
+  INCOME_PROOF
+  BANK_STATEMENT
+  EMPLOYMENT_VERIFICATION
+  OTHER
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum NotificationType {
+  APPLICATION_SUBMITTED
+  DOCUMENT_REQUEST
+  STATUS_UPDATE
+  BANK_VERIFICATION_REMINDER
+  APPROVAL
+  DECLINE
+}
+
 model BankVerification {
   id               String                 @id @default(uuid())
   applicationIdRef String                 @unique
@@ -139,4 +179,81 @@ model BankVerification {
   createdAt        DateTime               @default(now())
 
   application      Application            @relation(fields: [applicationIdRef], references: [id], onDelete: Cascade)
+}
+
+model DocumentRequest {
+  id               String                @id @default(uuid())
+  applicationIdRef String
+  documentType     DocumentType
+  message          String?
+  token            String                @unique
+  status           DocumentRequestStatus @default(REQUESTED)
+  expiresAt        DateTime
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  application      Application           @relation(fields: [applicationIdRef], references: [id], onDelete: Cascade)
+  document         Document?
+}
+
+model Document {
+  id                String          @id @default(uuid())
+  documentRequestId String          @unique
+  fileName          String
+  filePath          String
+  mimeType          String
+  uploadedAt        DateTime        @default(now())
+
+  documentRequest   DocumentRequest @relation(fields: [documentRequestId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id               String              @id @default(uuid())
+  applicationIdRef String
+  type             NotificationType
+  channel          NotificationChannel
+  recipient        String
+  subject          String?
+  message          String
+  status           NotificationStatus  @default(PENDING)
+  sentAt           DateTime?
+  createdAt        DateTime            @default(now())
+
+  application      Application         @relation(fields: [applicationIdRef], references: [id], onDelete: Cascade)
+}
+
+model ApplicationAgreement {
+  id               String       @id @default(uuid())
+  applicationIdRef String       @unique
+  generatedAt      DateTime     @default(now())
+  signedAt         DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  application      Application  @relation(fields: [applicationIdRef], references: [id], onDelete: Cascade)
+}
+
+enum AdminRole {
+  STANDARD_AGENT
+  MANAGER
+}
+
+model AdminUser {
+  id             String      @id @default(uuid())
+  name           String
+  email          String      @unique
+  passwordHash   String
+  role           AdminRole   @default(STANDARD_AGENT)
+  isActive       Boolean     @default(true)
+  passwordChangeRequired Boolean @default(false)
+  passwordResetToken String? @unique
+  passwordResetExpiresAt DateTime?
+  inviteSentAt   DateTime?
+  lastLoginAt    DateTime?
+  createdById    String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  createdBy      AdminUser?  @relation("AdminUserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAdmins  AdminUser[] @relation("AdminUserCreatedBy")
 }

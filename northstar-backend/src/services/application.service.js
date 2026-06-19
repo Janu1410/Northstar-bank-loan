@@ -1,4 +1,8 @@
 import prisma from "../config/prisma.js";
+import {
+  sendApplicationSubmittedEmail,
+  sendNotificationEmailSafely,
+} from "./notificationEmail.service.js";
 
 const generateApplicationId = () => {
   const year = new Date().getFullYear();
@@ -112,7 +116,22 @@ export const createApplicationService = async (body, ipAddress) => {
     },
   });
 
-  return application;
+  const emailDelivery = await sendNotificationEmailSafely(
+    sendApplicationSubmittedEmail,
+    {
+      applicationId: application.applicationId,
+      email,
+      firstName,
+      lastName,
+    },
+  );
+
+  return {
+    ...application,
+    notificationDelivery: {
+      email: emailDelivery.delivered ? "SENT" : "FAILED",
+    },
+  };
 };
 
 
