@@ -16,6 +16,8 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
+  "https://northstar-bank-loan-admin1.onrender.com",
+  "https://northstar-bank-loan.onrender.com",
   process.env.FRONTEND_BASE_URL,
   process.env.ADMIN_FRONTEND_BASE_URL,
   ...(process.env.ALLOWED_ORIGINS || "").split(","),
@@ -23,21 +25,22 @@ const allowedOrigins = [
   .map((origin) => origin?.trim())
   .filter(Boolean);
 
-const corsOptions = {
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-    return callback(new Error("Origin not allowed by CORS"));
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204,
-};
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+app.options(/.*/, cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.resolve("uploads")));
 
