@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 
 import { apiRequest } from "../../lib/api";
 
@@ -24,7 +24,7 @@ type ResetPasswordApiResponse = {
   };
 };
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token") ?? "";
@@ -255,5 +255,13 @@ export default function ResetPasswordPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-[#eef3fb]" />}>
+      <ResetPasswordPageContent />
+    </Suspense>
   );
 }
