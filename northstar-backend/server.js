@@ -15,20 +15,29 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
+const allowedOrigins = [
+  process.env.FRONTEND_BASE_URL,
+  process.env.ADMIN_FRONTEND_BASE_URL,
+  ...(process.env.ALLOWED_ORIGINS || "").split(","),
+]
+  .map((origin) => origin?.trim())
   .filter(Boolean);
 
-app.use(cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
 
-      return callback(new Error("Origin not allowed by CORS"));
-    },
-}));
+    return callback(new Error("Origin not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 app.use(express.json());
 app.use("/uploads", express.static(path.resolve("uploads")));
 
