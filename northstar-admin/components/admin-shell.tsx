@@ -6,20 +6,24 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { clearAdminSession, getStoredAdminToken, storeAdminUser } from "../lib/auth";
 import { apiRequest } from "../lib/api";
-import type { LoggedInAdmin } from "../types/admin";
+import type { AdminRole, LoggedInAdmin } from "../types/admin";
 
 type AdminShellProps = {
   admin: LoggedInAdmin;
   children: ReactNode;
 };
 
-const navItems = [
+const navItems: ReadonlyArray<{
+  label: string;
+  href: string;
+  roles: readonly AdminRole[];
+}> = [
   { label: "Dashboard", href: "/dashboard", roles: ["MANAGER", "STANDARD_AGENT"] },
   { label: "Applications", href: "/applications", roles: ["MANAGER", "STANDARD_AGENT"] },
   { label: "Document Requests", href: "/document-requests", roles: ["MANAGER", "STANDARD_AGENT"] },
   { label: "Notifications", href: "/notifications", roles: ["MANAGER", "STANDARD_AGENT"] },
   { label: "Admin Users", href: "/admin-users", roles: ["MANAGER"] },
-] as const;
+];
 
 const managerOnlyRoutes = new Set(["/admin-users"]);
 
