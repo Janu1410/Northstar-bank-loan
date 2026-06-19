@@ -24,11 +24,19 @@ export const loginAdmin = async (req, res) => {
 
 export const requestAdminPasswordReset = async (req, res) => {
   try {
-    await requestAdminPasswordResetService(req.body);
+    const result = await requestAdminPasswordResetService(req.body);
 
     return res.status(200).json({
       success: true,
-      message: "If the account exists, a password setup email has been sent.",
+      message: result?.delivered
+        ? "If the account exists, a password setup email has been sent."
+        : "Reset link generated. Email delivery is unavailable right now, so use the direct reset link below.",
+      data: result?.resetLink
+        ? {
+            delivered: result.delivered,
+            resetLink: result.resetLink,
+          }
+        : undefined,
     });
   } catch (error) {
     return res.status(400).json({

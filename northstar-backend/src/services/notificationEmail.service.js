@@ -72,7 +72,7 @@ const getDocumentUploadLink = (token) => {
   return `${FRONTEND_BASE_URL}/document-upload?token=${token}`;
 };
 
-const getAdminPasswordSetupLink = (token) => {
+export const getAdminPasswordSetupLink = (token) => {
   if (!ADMIN_FRONTEND_BASE_URL) {
     throw new Error("ADMIN_FRONTEND_BASE_URL is missing.");
   }

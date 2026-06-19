@@ -16,6 +16,10 @@ type LoginApiResponse = {
 type ForgotPasswordApiResponse = {
   success: boolean;
   message: string;
+  data?: {
+    delivered: boolean;
+    resetLink: string;
+  };
 };
 
 export default function LoginPage() {
@@ -26,6 +30,7 @@ export default function LoginPage() {
   const [isResetSubmitting, setIsResetSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resetMessage, setResetMessage] = useState<string | null>(null);
+  const [resetLink, setResetLink] = useState<string | null>(null);
 
   useEffect(() => {
     if (getStoredAdminToken()) {
@@ -68,6 +73,7 @@ export default function LoginPage() {
 
     setError(null);
     setResetMessage(null);
+    setResetLink(null);
     setIsResetSubmitting(true);
 
     try {
@@ -80,6 +86,7 @@ export default function LoginPage() {
       );
 
       setResetMessage(response.message);
+      setResetLink(response.data?.resetLink ?? null);
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -188,7 +195,15 @@ export default function LoginPage() {
 
               {resetMessage ? (
                 <div className="rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                  {resetMessage}
+                  <p>{resetMessage}</p>
+                  {resetLink ? (
+                    <a
+                      href={resetLink}
+                      className="mt-2 inline-flex font-semibold text-emerald-800 underline underline-offset-4"
+                    >
+                      Open password reset page
+                    </a>
+                  ) : null}
                 </div>
               ) : null}
 

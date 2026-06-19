@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import prisma from "../config/prisma.js";
 import {
+  getAdminPasswordSetupLink,
   sendAdminPasswordResetEmail,
   sendNotificationEmailSafely,
 } from "./notificationEmail.service.js";
@@ -101,11 +102,19 @@ export const requestAdminPasswordResetService = async ({ email }) => {
     },
   });
 
-  return sendNotificationEmailSafely(sendAdminPasswordResetEmail, {
+  const emailDelivery = await sendNotificationEmailSafely(sendAdminPasswordResetEmail, {
     email: admin.email,
     fullName: admin.name,
     token,
   });
+
+  const resetLink = getAdminPasswordSetupLink(token);
+
+  return {
+    delivered: emailDelivery.delivered,
+    error: emailDelivery.error,
+    resetLink,
+  };
 };
 
 export const validateAdminPasswordResetTokenService = async (token) => {
