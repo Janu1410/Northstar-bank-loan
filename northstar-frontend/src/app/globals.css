@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --foreground: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --brand: #163d73;
+  --brand-hover: #102e57;
+  --brand-deep: #10233f;
+  --brand-soft: #e8eff8;
+  --brand-tint: #f3f7fc;
+  --success: #059669;
+  --shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
+  --font-sans:
+    "Aptos", "IBM Plex Sans", "Segoe UI Variable", "Segoe UI", "Helvetica Neue",
+    "Arial Nova", Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(22, 61, 115, 0.16);
+}
+
+.font-serif {
+  font-family: var(--font-serif), serif;
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
+}
+
+.section-title {
+  @apply text-3xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-4xl lg:text-5xl;
+}
+
+.section-copy {
+  @apply max-w-2xl text-base leading-7 text-slate-600 sm:text-lg;
+}
+
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.26em] text-[var(--brand)];
+}
+
+.card-border {
+  border: 1px solid var(--border);
+}
+
+.soft-shadow {
+  box-shadow: var(--shadow);
+}
+
+.balance-text {
+  text-wrap: balance;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 9999px;
+  border: 3px solid #ffffff;
+  background: var(--brand);
+  box-shadow: 0 10px 24px rgba(22, 61, 115, 0.24);
+}
+
+.slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border: 3px solid #ffffff;
+  border-radius: 9999px;
+  background: var(--brand);
+  box-shadow: 0 10px 24px rgba(22, 61, 115, 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
