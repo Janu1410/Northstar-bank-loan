@@ -132,6 +132,10 @@ type SubmissionSuccess = {
   currentStatus: string;
   createdAt: string;
   lastName: string;
+  email: string;
+  notificationDelivery?: {
+    email: string;
+  };
 };
 
 const fieldLabels: Record<keyof ApplicationFormData, string> = {
@@ -364,6 +368,7 @@ export default function ApplyPage() {
           const response = await api.post("/applications", payload);
           setSubmission({
             ...(response.data?.data ?? response.data),
+            email: values.email.trim(),
             lastName: values.lastName.trim(),
           });
         } catch (error: unknown) {
@@ -416,6 +421,12 @@ export default function ApplyPage() {
             <p className="text-sm font-semibold text-slate-950">Next Step:</p>
             <p className="mt-2 text-base leading-7 text-slate-600">
               Complete secure bank verification.
+            </p>
+          </div>
+          <div className="mt-6 rounded-[22px] border border-emerald-200 bg-emerald-50 p-5">
+            <p className="text-sm font-semibold text-emerald-900">Confirmation Email:</p>
+            <p className="mt-2 text-base leading-7 text-emerald-800">
+              A successful application confirmation has been sent to {submission.email}.
             </p>
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
